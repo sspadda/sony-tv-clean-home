@@ -30,6 +30,12 @@ final class LineIcon extends Drawable {
             1, 80, 165, 1, 40, 165, 2, 0, 85, 60, 1, 85, 100, 0, 120, 60, 1, 120, 100, 0, 155, 60, 1, 155, 100};
     static final int[] PICTURE ={0, 30, 50, 1, 210, 50, 1, 210, 165, 1, 30, 165, 2, 0, 120, 165, 1, 120, 200,
             0, 80, 200, 1, 160, 200};
+    // CleanFrame's top-right controls: a photo (Wallpaper) and four squares (All apps).
+    static final int[] PHOTO = {0, 35, 50, 1, 205, 50, 1, 205, 190, 1, 35, 190, 2,
+            0, 35, 165, 1, 95, 110, 1, 150, 160, 0, 135, 145, 1, 165, 120, 1, 205, 155, 3, 158, 88, 14};
+    static final int[] GRID = {0, 45, 45, 1, 105, 45, 1, 105, 105, 1, 45, 105, 2, 0, 135, 45, 1, 195, 45,
+            1, 195, 105, 1, 135, 105, 2, 0, 45, 135, 1, 105, 135, 1, 105, 195, 1, 45, 195, 2,
+            0, 135, 135, 1, 195, 135, 1, 195, 195, 1, 135, 195, 2};
 
     private final int[] ops;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
