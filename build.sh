@@ -3,10 +3,10 @@
 #   macOS:  brew install openjdk@17 && brew install --cask android-commandlinetools
 #           sdkmanager "platforms;android-34" "build-tools;34.0.0"
 # Use a different app list with: APPS=my-apps.txt sh build.sh
-# The CleanFrame look installs as its own app (PKG), so it can sit beside an official release,
-# which is signed with a different key. assets/ comes from prepare-assets.sh.
+# The app ID is PKG (the code keeps TV Detox's com.ansub.tvhome package), so it can sit beside a
+# TV Detox install, which is signed with a different key. assets/ comes from prepare-assets.sh.
 set -e
-PKG=${PKG:-com.ansub.tvhome.cleanframe}
+PKG=${PKG:-io.github.sspadda.sonytvcleanhome}
 cd "$(dirname "$0")"
 
 [ -n "$JAVA_HOME" ] || for j in /opt/homebrew/opt/openjdk@17 /usr/local/opt/openjdk@17 /usr/lib/jvm/java-17-openjdk-amd64; do [ -d "$j" ] && JAVA_HOME=$j && break; done

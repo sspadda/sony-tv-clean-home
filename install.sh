@@ -39,14 +39,14 @@ APK=out/tvhome.apk
 if [ ! -f "$APK" ]; then
   APK=$(mktemp -d)/tvhome.apk
   echo "Downloading the home screen…"
-  curl -fsSL -o "$APK" https://github.com/Ansub/tv-detox/releases/latest/download/tvhome.apk
+  curl -fsSL -o "$APK" https://github.com/sspadda/sony-tv-clean-home/releases/latest/download/tvhome.apk
 fi
 
 echo "Installing… If your TV shows a Google Play Protect message, follow it on the TV to allow the install."
 if ! out=$(adb -s "$TV" install -r "$APK" 2>&1); then
   case "$out" in
     *UPDATE_INCOMPATIBLE*) echo "Replacing an older copy signed with a different key…"
-                           adb -s "$TV" uninstall com.ansub.tvhome >/dev/null; adb -s "$TV" install "$APK" ;;
+                           adb -s "$TV" uninstall io.github.sspadda.sonytvcleanhome >/dev/null; adb -s "$TV" install "$APK" ;;
     *) echo "$out" >&2; exit 1 ;;
   esac
 fi
@@ -56,17 +56,17 @@ if [ -n "$APPS" ] || [ -n "$QUICK" ]; then
   set -- --es stamp "$(date +%s)"
   [ -n "$APPS" ] && set -- "$@" --es apps "\"$APPS\""
   [ -n "$QUICK" ] && set -- "$@" --es quick "\"$QUICK\""
-  adb -s "$TV" shell am start -n com.ansub.tvhome/.MainActivity "$@" >/dev/null
+  adb -s "$TV" shell am start -n io.github.sspadda.sonytvcleanhome/com.ansub.tvhome.MainActivity "$@" >/dev/null
 fi
 
-ME=com.ansub.tvhome/.MainActivity
+ME=io.github.sspadda.sonytvcleanhome/com.ansub.tvhome.MainActivity
 # Keeps adb's exit status, so a failed command on the TV counts as failed here.
 sh_tv() { _rc=0; _out=$(adb -s "$TV" shell "$@") || _rc=$?; [ -z "$_out" ] || printf '%s\n' "$_out" | tr -d '\r'; return $_rc; }
 current_home() { sh_tv cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -1; }
 
 # Make it the default home: the role (Android 10+) and the classic way.
 if [ "$(sh_tv getprop ro.build.version.sdk)" -ge 29 ]; then
-  sh_tv cmd role add-role-holder --user 0 android.app.role.HOME com.ansub.tvhome >/dev/null 2>&1 || true
+  sh_tv cmd role add-role-holder --user 0 android.app.role.HOME io.github.sspadda.sonytvcleanhome >/dev/null 2>&1 || true
 fi
 sh_tv cmd package set-home-activity "$ME" >/dev/null 2>&1 || true
 
@@ -78,7 +78,7 @@ LAUNCHERS="com.google.android.tvlauncher com.google.android.apps.tv.launcherx co
 # the TV needs them to start, so they, unknown apps and anything always running stay on.
 is_launcher() {
   case "$1" in
-    com.ansub.tvhome|com.android.settings|com.android.tv.settings|com.android.systemui|com.android.provision) return 1 ;;
+    io.github.sspadda.sonytvcleanhome|com.android.settings|com.android.tv.settings|com.android.systemui|com.android.provision) return 1 ;;
     *setup*|*wraith*|*provision*|*systemui*|*tvcenter*|*.tv.framework*|*.tvinput*) return 1 ;;
   esac
   case " $(echo $LAUNCHERS) " in *" $1 "*) ;; *) return 1 ;; esac
@@ -137,7 +137,7 @@ if [ -n "$may_turn_off" ] && [ "$(current_home)" != "$ME" ]; then
   others=""
   for p in $(home_apps); do
     if is_launcher "$p"; then others="$others $p"; continue; fi
-    case "$p" in com.ansub.tvhome|com.android.settings|com.android.tv.settings|"$WRAITH") ;; *) echo "Leaving $p on: it may be needed for your TV to start." ;; esac
+    case "$p" in io.github.sspadda.sonytvcleanhome|com.android.settings|com.android.tv.settings|"$WRAITH") ;; *) echo "Leaving $p on: it may be needed for your TV to start." ;; esac
   done
   others=$(echo $others | tr ' ' '\n')
   if [ -n "$others" ]; then

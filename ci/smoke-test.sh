@@ -12,7 +12,7 @@ fail() {
   exit 1
 }
 # Waits up to 15s for the home screen to be in front.
-wait_home() { for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do focus | grep -q com.ansub.tvhome && return 0; sleep 1; done; return 1; }
+wait_home() { for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do focus | grep -q io.github.sspadda.sonytvcleanhome && return 0; sleep 1; done; return 1; }
 ui() { adb -s "$TV" shell "uiautomator dump /sdcard/ui.xml" >/dev/null 2>&1; adb -s "$TV" shell "cat /sdcard/ui.xml"; }
 focus() { adb -s "$TV" shell dumpsys window | grep -m1 mCurrentFocus; }
 
@@ -22,13 +22,13 @@ echo "== install"
 YES=1 sh install.sh "$TV"
 sleep 3
 home=$(adb -s "$TV" shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -1 | tr -d '\r')
-[ "$home" = "com.ansub.tvhome/.MainActivity" ] || fail "default home is $home"
+[ "$home" = "io.github.sspadda.sonytvcleanhome/com.ansub.tvhome.MainActivity" ] || fail "default home is $home"
 adb -s "$TV" shell input keyevent KEYCODE_HOME
 wait_home || fail "home screen not in front"
 
 echo "== home screen shows a clock and Settings"
 x=$(ui)
-echo "$x" | grep -q 'text="Settings"' || fail "no Settings tile"
+echo "$x" | grep -q 'content-desc="Settings"' || fail "no Settings icon"
 echo "$x" | grep -qE 'text="[0-9]{1,2}:[0-9]{2}"' || fail "no clock"
 tiles=$(echo "$x" | grep -o 'focusable="true"' | wc -l | tr -d ' ')
 echo "   $tiles tiles"
@@ -42,7 +42,7 @@ wait_home || fail "Home didn't come back"
 echo "== custom app list"
 # Use whatever TV app this device has (test images may have none).
 app=$(adb -s "$TV" shell cmd package query-activities --brief -a android.intent.action.MAIN -c android.intent.category.LEANBACK_LAUNCHER \
-  | tr -d '\r' | grep / | sed 's|/.*||; s/^ *//' | grep -vx com.ansub.tvhome | head -1)
+  | tr -d '\r' | grep / | sed 's|/.*||; s/^ *//' | grep -vx io.github.sspadda.sonytvcleanhome | head -1)
 if [ -n "$app" ]; then
   YES=1 sh install.sh "$TV" "$app"
   adb -s "$TV" shell input keyevent KEYCODE_HOME
@@ -68,6 +68,6 @@ echo "== undo puts the TV back"
 sh undo.sh "$TV" >/dev/null
 sleep 3
 home=$(adb -s "$TV" shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -1 | tr -d '\r')
-case "$home" in *com.ansub.tvhome*|"") fail "after undo, home is '$home'" ;; esac
+case "$home" in *io.github.sspadda.sonytvcleanhome*|"") fail "after undo, home is '$home'" ;; esac
 echo "   home is back to $home"
 echo "PASS ($SHOT)"

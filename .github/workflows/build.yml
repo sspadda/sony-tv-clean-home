@@ -72,18 +72,5 @@ jobs:
           name: screenshot-api${{ matrix.api }}
           path: smoke-api*.png
 
-  release:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [shellcheck, build, emulator-test]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: tvhome-apk
-      - env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "$GITHUB_REF_NAME" tvhome.apk --repo "$GITHUB_REPOSITORY" \
-            --title "$GITHUB_REF_NAME" --notes "Install with: sh install.sh <TV_IP>"
+# Releases are signed and uploaded by hand (the signing key stays off GitHub), so CI only builds
+# and tests: sh build.sh with KEYSTORE/KEYSTORE_PASS set, then gh release create vX.Y.Z out/tvhome.apk.

@@ -61,7 +61,7 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     // Top-row apps, in this order of preference:
-    //  1. a list saved at install time:  am start -n com.ansub.tvhome/.MainActivity --es apps "pkg1,pkg2"
+    //  1. a list saved at install time:  am start -n io.github.sspadda.sonytvcleanhome/com.ansub.tvhome.MainActivity --es apps "pkg1,pkg2"
     //     (--es apps auto  goes back to 2; add --es stamp <unique> so it's applied only once, see saveConfig)
     //  2. apps.txt (built in as Apps.LIST), topped up with other TV apps installed on this TV.
     // Missing apps are skipped. Topping up stops at six apps, but a chosen list can be any length:

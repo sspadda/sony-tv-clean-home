@@ -36,7 +36,7 @@ is_off() { sh_tv pm list packages -d "$1" | grep -qx "package:$1"; }
 installed() { sh_tv pm list packages "$1" | grep -qx "package:$1"; }
 
 # shellcheck disable=SC2034 # ME is read inside the eval'd check strings below
-ME=com.ansub.tvhome/.MainActivity
+ME=io.github.sspadda.sonytvcleanhome/com.ansub.tvhome.MainActivity
 home() { sh_tv cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME | tail -1; }
 echo "Home screen"
 # The TV's own launchers first: while one is on, Home can't be fixed.
@@ -51,7 +51,7 @@ if [ "$(home)" != "$ME" ] && installed $LAUNCHERX && ! is_off $LAUNCHERX && ! ec
   echo "  ok    Home opens Google TV's home screen (kept on, as install.sh said; GOOGLE_TV=1 turns it off)"
 else
   check "Home opens this home screen" '[ "$(home)" = "$ME" ]' \
-    'sh_tv cmd role add-role-holder --user 0 android.app.role.HOME com.ansub.tvhome; sh_tv cmd package set-home-activity "$ME"'
+    'sh_tv cmd role add-role-holder --user 0 android.app.role.HOME io.github.sspadda.sonytvcleanhome; sh_tv cmd package set-home-activity "$ME"'
 fi
 
 if [ -n "$LIST" ]; then

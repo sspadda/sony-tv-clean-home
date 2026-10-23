@@ -61,6 +61,6 @@ if [ -n "$failed" ]; then
 fi
 # In the same argument as rm, like the read above: Git Bash on Windows turns an argument that starts with / into a Windows path.
 adb -s "$TV" shell "rm -f $LIST"
-adb -s "$TV" uninstall com.ansub.tvhome >/dev/null 2>&1 || true
+adb -s "$TV" uninstall io.github.sspadda.sonytvcleanhome >/dev/null 2>&1 || true
 adb -s "$TV" shell input keyevent KEYCODE_HOME
 echo "Removed. Your TV is back to its own home screen."

@@ -69,7 +69,7 @@ KEEP="com.google.android.apps.mediashell com.google.android.katniss
 com.google.android.tv.assistant com.google.android.marvin.talkback
 com.google.android.tv.remote.service com.google.android.tts
 com.google.android.syncadapters.contacts com.google.android.syncadapters.calendar
-com.ansub.tvhome com.google.android.webview com.tcl.android.webview
+io.github.sspadda.sonytvcleanhome com.google.android.webview com.tcl.android.webview
 com.tcl.tv com.tcl.micmanager
 com.android.dreams.basic com.google.android.apps.tv.dreamx"
 
@@ -162,7 +162,7 @@ com.google.android.apps.tv.launcherx	Google TV home screen
 com.google.android.leanbacklauncher	Android TV home screen
 com.google.android.tungsten.setupwraith	Google TV setup
 com.dolby.android.audio.service	Dolby audio
-com.ansub.tvhome	TV Detox home screen
+io.github.sspadda.sonytvcleanhome	Sony TV Clean Home screen
 com.tcl.inputmethod.international	TV keyboard
 com.google.android.webview	Web pages inside apps
 com.tcl.android.webview	Web pages inside apps
