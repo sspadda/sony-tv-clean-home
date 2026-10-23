@@ -129,6 +129,7 @@ public class MainActivity extends Activity {
     private Bitmap photo; // the wallpaper; reused while browsing, so each preview doesn't take another 8MB
     private String lastDockKey; // where Down from the top-right icons goes back to
     private final List<View> tiles = new ArrayList<>();
+    private final List<View> utils = new ArrayList<>(); // the top-right icons, left to right
     private boolean dirty = true;
     private java.util.Locale shownLocale; // the TV's language (and region) when the page was built
     private String focusedKey;
@@ -421,6 +422,7 @@ public class MainActivity extends Activity {
             ((ViewGroup) wrap.getParent()).removeView(wrap);
         }
         tiles.clear();
+        utils.clear();
         rowApps.clear();
         movingKey = null;
         moveHint.setVisibility(View.GONE);
@@ -510,6 +512,10 @@ public class MainActivity extends Activity {
                 if (!down) showEditMenu(key);
                 return true;
             }
+            // The dock doesn't wrap, and its ends don't hand focus up to the icons.
+            int at = shelf.indexOfChild((View) v.getParent());
+            if ((code == KeyEvent.KEYCODE_DPAD_LEFT && at == 0)
+                    || (code == KeyEvent.KEYCODE_DPAD_RIGHT && at == shelf.getChildCount() - 1)) return true;
             if (!ok) return false;
             if (down) {
                 if (ev.getRepeatCount() == 0) {
@@ -575,6 +581,10 @@ public class MainActivity extends Activity {
         });
         card.setOnClickListener(v -> open(key));
         card.setOnKeyListener((v, code, ev) -> {
+            // Left and Right stay among the icons: the row's ends don't drop down into the dock.
+            int at = utils.indexOf(v);
+            if ((code == KeyEvent.KEYCODE_DPAD_LEFT && at == 0)
+                    || (code == KeyEvent.KEYCODE_DPAD_RIGHT && at == utils.size() - 1)) return true;
             if (code != KeyEvent.KEYCODE_DPAD_DOWN) return false;
             View back = tile(lastDockKey);
             if (back == null && !rowApps.isEmpty()) back = tile(rowApps.get(0));
@@ -593,6 +603,7 @@ public class MainActivity extends Activity {
         wrap.addView(name, np);
         root.addView(wrap, at(x - side, px(UTIL_TOP), b + 2 * side, -2));
         tiles.add(card);
+        utils.add(card);
     }
 
     private void open(String key) {
