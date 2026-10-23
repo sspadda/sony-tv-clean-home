@@ -29,6 +29,7 @@ import android.net.NetworkRequest;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -147,6 +148,20 @@ public class MainActivity extends Activity {
         }
     };
 
+    // When the TV boots, its HDMI inputs register a little after Home has started, so the first build
+    // can find none. An input turning up (or going, or being renamed) later rebuilds the tiles.
+    private final TvInputManager.TvInputCallback inputsChanged = new TvInputManager.TvInputCallback() {
+        @Override public void onInputAdded(String id) { onInputsChanged(); }
+        @Override public void onInputRemoved(String id) { onInputsChanged(); }
+        @Override public void onInputUpdated(String id) { onInputsChanged(); }
+        @Override public void onTvInputInfoUpdated(TvInputInfo info) { onInputsChanged(); }
+    };
+
+    private void onInputsChanged() {
+        dirty = true;
+        refreshApps();
+    }
+
     // The network tile follows the connection live: Wi-Fi bars, Ethernet or Offline. Only its icon and
     // label change, so nothing is rebuilt.
     private ImageView netIcon;
@@ -214,11 +229,16 @@ public class MainActivity extends Activity {
             if (android.os.Build.VERSION.SDK_INT >= 24) cm.registerDefaultNetworkCallback(networkChanged);
             else cm.registerNetworkCallback(new NetworkRequest.Builder().build(), networkChanged);
         } catch (Exception ignored) {}
+
+        TvInputManager tim = (TvInputManager) getSystemService(Context.TV_INPUT_SERVICE);
+        if (tim != null) tim.registerCallback(inputsChanged, new Handler());
     }
 
     @Override
     protected void onDestroy() {
         unregisterReceiver(packagesChanged);
+        TvInputManager tim = (TvInputManager) getSystemService(Context.TV_INPUT_SERVICE);
+        if (tim != null) tim.unregisterCallback(inputsChanged);
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm != null) try { cm.unregisterNetworkCallback(networkChanged); } catch (Exception ignored) {}
         super.onDestroy();
